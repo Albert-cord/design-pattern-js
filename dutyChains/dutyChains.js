@@ -1,3 +1,8 @@
+
+// chain1 -> chain2 -> chain3 -> chain4 -> default
+// not if else, just pass the request to next chain to done;
+// to do: add support to Promise;
+
 class Chain {
     constructor(fn) {
         if(typeof fn !== 'function') {
