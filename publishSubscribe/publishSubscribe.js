@@ -16,15 +16,20 @@ class EventEmitter {
         return this.on.apply(this, args);
     }
     setMaxListeners(n) {
-        n = n !== n ? 0 : n;
-        n = typeof n === number ? n : 0;
-        this.maxListeners = n || 0;
+        n = n !== n ? 1 : n;
+        n = typeof n === number ? n : 1;
+        this.maxListeners = n || 1;
     }
-    emit(event, ...args) {
-        if(this.events[event] && this.events[event].length > 0) {
-            this.events[event].forEach(fn => {
-                typeof fn === 'function' && fn.apply(this, args);
-            })
+    async emit(event, ...args) {
+        let evts = this.events[event]
+        if(evts && evts.length > 0) {
+            
+            for (const fn of evts) {
+                if(typeof fn === 'function') {
+                    await fn.apply(this, args);
+                }
+            }
+
             // return true;
         } else {
             if(this.isOnOfflineStack) {
