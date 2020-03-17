@@ -1,4 +1,5 @@
 
+import {hasOwnProperty} from '../utils';
 
 // convert state to class
 // and setAttribute(setController) to the relevant state
@@ -7,6 +8,11 @@
 const inheritPrototype = function(superClass, subClass) {
     subClass.prototype = Object.create(superClass.prototype);
     subClass.prototype.constructor = subClass;
+    // for(let prop in superClass) {
+    //     if(hasOwnProperty(superClass, prop)) {
+    //         subClass[prop] = superClass[prop];
+    //     }
+    // }
 }
 
 const beforeFunction = function (superClass, subClass, compareFn) {
