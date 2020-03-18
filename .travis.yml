@@ -1,0 +1,18 @@
+os: linux
+sudo: false
+language: javaScript
+
+node:
+  - "11.15.0"
+install:
+  - npm i
+script:
+  - npm run test
+cache:
+  - pip
+branches:
+  only:
+    - master
+
+notifications:
+  email: false

@@ -28,7 +28,7 @@ class Chain {
     }
 }
 
-class DutyChains {
+export default class DutyChains {
     constructor(nextKey, ...fns) {
         this.nextKey = nextKey;
         this.head = null;

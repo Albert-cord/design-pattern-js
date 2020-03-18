@@ -1,6 +1,3 @@
-import { resolve } from "url";
-import { rejects } from "assert";
-
 // use js-lru will be great without stackoverflow;
 // var cache = {};
 
@@ -12,18 +9,19 @@ import { rejects } from "assert";
 //     }
 //     //otherWise deal with data;
 // }
-var closureCache = (function () {
-// use js-lru will be great without stackoverflow;
-    var cache = {};
-    return function () {
-        //has a key
-        var key = Array.prototype.join.call(arguments, '');
-        if (cache[key]) {
-            return cache[key];
+var closureCache = function (fn) {
+    // use js-lru will be great without stackoverflow;
+        var cache = {};
+        return function () {
+            //has a key
+            var key = Array.prototype.join.call(arguments, '');
+            if (cache[key]) {
+                return cache[key];
+            }
+            //otherWise deal with data;
+            return cache[key] = fn.apply(this, arguments);
         }
-        //otherWise deal with data;
-    }
-})();
+    };
 
 var lastLifeCyclePost = (function() {
     var args = [];

@@ -24,7 +24,7 @@ Function.prototype.afterFn = function (afterFn) {
 // but how to operation new action ?
 // fn's static method cannot to invoke;
 
-const beforeFunction = function (beforeFn, fn, compareFn) {
+export const beforeFunction = function (beforeFn, fn, compareFn) {
     return function (...args) {
         if (typeof compareFn === 'function' && beforeFn.apply(this, args) !== compareFn.apply(this, args))
             return;
@@ -34,7 +34,7 @@ const beforeFunction = function (beforeFn, fn, compareFn) {
     }
 }
 
-const afterFunction = function (afterFn, fn, compareFn) {
+export const afterFunction = function (afterFn, fn, compareFn) {
     return function (...args) {
         let ret = fn.apply(this, args);
         if (typeof compareFn === 'function' && ret !== compareFn.apply(this, args))

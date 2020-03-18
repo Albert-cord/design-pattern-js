@@ -30,14 +30,4 @@ const mediatorFactory = function(operations) {
         mediatorOperations
     }
 }
-
-// use instance
-
-var receivers = {};
-var mediator = mediatorFactory([function addReceiver(receiver) {
-    var c = receiver.c;
-    receivers[c] = receivers[c] || [];
-    receivers[c].push(receiver);
-    console.log(receivers)
-}])
-mediator.receiverMessage('addReceiver', { c: 'color' })
+export default mediatorFactory;

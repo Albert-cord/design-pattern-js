@@ -4,10 +4,15 @@
   "description": "to create a useful JavaScript's design pattern library.",
   "main": "index.js",
   "dist": {
-    "prod": "./dist/designPatternJs.js"
+    "prod": {
+      "dir": "./dist/designPatternJs.js",
+      "name": "designPattern"
+    }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test/index.js",
+    "prod": "rollup --config rollup.config.js",
+    "dev": "rollup --config rollup.dev.config.js"
   },
   "repository": {
     "type": "git",
@@ -21,16 +26,18 @@
   },
   "homepage": "https://github.com/Albert-cord/design-pattern-js#readme",
   "devDependencies": {
-    "@babel/polyfill": "^7.8.7",
     "@babel/core": "^7.8.7",
+    "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
-    "rollup": "^2.0.6",
+    "@rollup/plugin-commonjs": "11.0.2",
+    "cross-env": "^7.0.2",
     "mocha": "^6.2.0",
+    "rollup": "^2.0.6",
     "rollup-plugin-alias": "2.0.0",
     "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "10.1.0",
     "rollup-plugin-eslint": "7.0.0",
     "rollup-plugin-node-resolve": "5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-uglify": "6.0.3"
   }
 }

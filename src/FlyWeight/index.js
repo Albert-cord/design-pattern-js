@@ -35,7 +35,10 @@ const flyWeightManager = (function() {
             return flyWeightObject;
         }
     }
-})()
+})();
+
+export default flyWeightManager;
+
 
 
 // object pool
