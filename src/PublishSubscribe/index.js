@@ -1,16 +1,18 @@
+import {designPatternConsole} from '../utils';
 
 export default class EventEmitter {
+    // rollup cannot support class's static property;
     // static defaultMaxListeners = 100;
     // static defaultMaxEvents = 100;
 
-    constructor(isOnOfflineStack) {
+    constructor(isOnOfflineStack = false) {
         this.events = {};
         this.listenersLength = 0;
         this.maxListeners = EventEmitter.defaultMaxListeners;
         this.maxEvents = EventEmitter.defaultMaxEvents;
 
         // offlineStack
-        this.isOnOfflineStack = isOnOfflineStack || false;
+        this.isOnOfflineStack = isOnOfflineStack;
         this.offlineStack = {};
     }
     addEventListener(...args) {
@@ -78,7 +80,7 @@ export default class EventEmitter {
         event = String(event);
         if(Object.prototype.hasOwnProperty.call(this.events, event)) {
             if(this.listenersLength >= this.maxListeners) {
-                console.error('超出监听数量限制');
+                designPatternConsole('error', '超出监听数量限制');
                 return;
             }
         } else {
@@ -86,7 +88,8 @@ export default class EventEmitter {
             this.listenersLength++;
         }
         if(this.events[event].length >= this.maxEvents) {
-            console.error('超出监听事件数量限制');
+            designPatternConsole('error', '超出监听事件数量限制');
+
             return;
         }
 
@@ -103,7 +106,7 @@ export default class EventEmitter {
         event = String(event);
         if(Object.prototype.hasOwnProperty.call(this.events, event)) {
             if(this.listenersLength >= this.maxListeners) {
-                console.error('超出监听数量限制');
+                designPatternConsole('error', '超出监听数量限制');
                 return;
             }
         } else {
@@ -111,7 +114,7 @@ export default class EventEmitter {
             this.listenersLength++;
         }
         if(this.events[event].length >= this.maxEvents) {
-            console.error('超出监听事件数量限制');
+            designPatternConsole('error', '超出监听事件数量限制');
             return;
         }
 

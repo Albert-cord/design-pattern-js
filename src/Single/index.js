@@ -13,7 +13,7 @@ export default class Single {
         this.fn = fn;
         this.instance = null;
     }
-
+    // if args are not match by pre setter ?
     getInstance(...args) {
         return this.instance || (this.instance = this.fn.apply(this, args));
     }

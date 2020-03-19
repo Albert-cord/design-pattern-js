@@ -1,46 +1,170 @@
 const assert = require('assert');
-describe('Array', function() {
-  describe('#indexOf()', function() {
-    it('should return -1 when the value is not present', function() {
-        // use 
-        let OffLightState = function () { this.a = 0; return this;};
-        OffLightState.prototype.buttonWasPressed = function () {
-            console.log('弱光'); // offLightState 对应的行为
-        };
-        OffLightState.prototype.buttonWasPressed.nextState = 'ruoguang4'
+import State from '../../src/State';
 
-        let OffLightState1 = function () { this.aa = 1; return this;};
-        OffLightState1.prototype.buttonWasPressed = function () {
-            console.log('弱光1'); // offLightState 对应的行为
-        };
-        OffLightState1.prototype.buttonWasPressed.nextState = 'ruoguang1';
-        let OffLightState2 = function () { this.aaa = 2; return this;};
-        OffLightState2.prototype.buttonWasPressed = function () {
-            console.log('弱光2'); // offLightState 对应的行为
-        };
-        OffLightState2.prototype.buttonWasPressed.nextState = 'ruoguang3';
-        let OffLightState3 = function () { this.aaaa = 3;return this;};
-        OffLightState3.prototype.buttonWasPressed = function () {
-            console.log('弱光3'); // offLightState 对应的行为
-        };
-        OffLightState3.prototype.buttonWasPressed.nextState = 'ruoguang2';
+describe('State', function() {
+  describe("inital and tests", function() {
+    let state;
+    let classes;
+    before(function() {
+                // use 
+                let OffLightState = function () { this.a = 0; return this;};
+                OffLightState.prototype.buttonWasPressed = function () {
+                    // console.log('弱光'); // offLightState 对应的行为
+                    return 0;
+                };
+                OffLightState.prototype.buttonWasPressed.nextState = 'ruoguang4';
+                OffLightState.prototype.useElectron = function () {
+                    // console.log('弱光'); // offLightState 对应的行为
+                    return '0 W';
+                };
 
-        let classes = [{
+        
+                let OffLightState1 = function () { this.aa = 1; return this;};
+                OffLightState1.prototype.buttonWasPressed = function () {
+                    // console.log('弱光1'); // offLightState 对应的行为
+                    return 1;
+                };
+                OffLightState1.prototype.buttonWasPressed.nextState = 'ruoguang1';
+                OffLightState.prototype.useElectron = function () {
+                    // console.log('弱光'); // offLightState 对应的行为
+                    return '1 W';
+                };
+
+                let OffLightState2 = function () { this.aaa = 2; return this;};
+                OffLightState2.prototype.buttonWasPressed = function () {
+                    // console.log('弱光2'); // offLightState 对应的行为
+                    return 2;
+                };
+                OffLightState2.prototype.buttonWasPressed.nextState = 'ruoguang3';
+                OffLightState.prototype.useElectron = function () {
+                    // console.log('弱光'); // offLightState 对应的行为
+                    return '2 W';
+                };
+
+                let OffLightState3 = function () { this.aaaa = 3;return this;};
+                OffLightState3.prototype.buttonWasPressed = function () {
+                    // console.log('弱光3'); // offLightState 对应的行为
+                    return 3;
+                };
+                OffLightState.prototype.useElectron = function () {
+                    // console.log('弱光'); // offLightState 对应的行为
+                    return '3 W';
+                };
+                OffLightState3.prototype.buttonWasPressed.nextState = 'ruoguang2';
+        
+                classes = [{
+                    fn: OffLightState,
+                    state: 'ruoguang1'
+                },{
+                    fn: OffLightState1,
+                    state: 'ruoguang2'
+                },{
+                    fn: OffLightState2,
+                    state: 'ruoguang3'
+                },{
+                    fn: OffLightState3,
+                    state: 'ruoguang4'
+                }];
+
+    });
+
+    it("#parameter pattern: [{fn, state}]; nextState hooked by unlinked function's static property\n should work by state.currentState.instance function", function() {
+        state = new State({fns: classes});
+        assert.equal(state.currentState.instance.buttonWasPressed(), 0);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 3);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 1);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 0);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 3);
+    });
+
+    it("#parameter pattern: fns: [{fn, state}], initialState: 'ruoguang4'; nextState hooked by unlinked function's static property\n should work by state.currentState.instance function", function() {
+        state = new State({fns: classes, initialState: 'ruoguang4'});
+        assert.equal(state.currentState.instance.buttonWasPressed(), 3);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 1);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 0);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 3);
+        assert.equal(state.currentState.instance.buttonWasPressed(), 1);
+    });
+
+    it("#parameter pattern: fns: [{fn, state, nextState}], initialState: 'ruoguang4'; nextState hooked by linked function of prop's property\n should work by state.currentState.instance function", function() {
+        let otherClasses = [{
             fn: OffLightState,
-            state: 'ruoguang1'
+            state: 'ruoguang1',
+            nextState: 'ruoguang3'
         },{
             fn: OffLightState1,
-            state: 'ruoguang2'
+            state: 'ruoguang2',
+            nextState: 'ruoguang1'
         },{
             fn: OffLightState2,
-            state: 'ruoguang3'
+            state: 'ruoguang3',
+            nextState: 'ruoguang4'
         },{
             fn: OffLightState3,
-            state: 'ruoguang4'
+            state: 'ruoguang4',
+            nextState: 'ruoguang2'
         }];
+        state = new State({fns: otherClasses, initialState: 'ruoguang3', keyMethods: 'useElectron'});
+        assert.equal(state.currentState.instance.useElectron(), '2 W');
+        assert.equal(state.currentState.instance.useElectron(), '3 W');
+        assert.equal(state.currentState.instance.useElectron(), '1 W');
+        assert.equal(state.currentState.instance.useElectron(), '0 W');
+        assert.equal(state.currentState.instance.useElectron(), '2 W');
+    });
 
-        let state = new State({fns: classes});
-        state.currentState.instance.buttonWasPressed();
+    it("#parameter pattern: fns: [{fn, state, nextState}], initialState: 'ruoguang4'; nextState hooked by linked function of prop's property\n should work by state.currentState.instance function", function() {
+        let otherClasses = [{
+            fn: OffLightState,
+            state: 'ruoguang1',
+            nextState: 'ruoguang3'
+        },{
+            fn: OffLightState1,
+            state: 'ruoguang2',
+            nextState: 'ruoguang1'
+        },{
+            fn: OffLightState2,
+            state: 'ruoguang3',
+            nextState: 'ruoguang4'
+        },{
+            fn: OffLightState3,
+            state: 'ruoguang4',
+            nextState: 'ruoguang2'
+        }];
+        state = new State({fns: otherClasses, initialStateIndex: 2, keyMethods: 'useElectron'});
+        assert.equal(state.currentState.instance.useElectron(), '2 W');
+        assert.equal(state.currentState.instance.useElectron(), '3 W');
+        assert.equal(state.currentState.instance.useElectron(), '1 W');
+        assert.equal(state.currentState.instance.useElectron(), '0 W');
+        assert.equal(state.currentState.instance.useElectron(), '2 W');
+    });
+
+    it("#parameter pattern: fns: [{fn, state, nextState}], initialState: 'ruoguang4'; nextState hooked by linked function of prop's property and can be reset state by setState API\n should work by state.currentState.instance function", function() {
+        let otherClasses = [{
+            fn: OffLightState,
+            state: 'ruoguang1',
+            nextState: 'ruoguang3'
+        },{
+            fn: OffLightState1,
+            state: 'ruoguang2',
+            nextState: 'ruoguang1'
+        },{
+            fn: OffLightState2,
+            state: 'ruoguang3',
+            nextState: 'ruoguang4'
+        },{
+            fn: OffLightState3,
+            state: 'ruoguang4',
+            nextState: 'ruoguang2'
+        }];
+        state = new State({fns: otherClasses, initialStateIndex: 2, keyMethods: 'useElectron'});
+        assert.equal(state.currentState.instance.useElectron(), '2 W');
+        state.setState('ruoguang2');
+        assert.equal(state.currentState.instance.useElectron(), '1 W');
+        assert.equal(state.currentState.instance.useElectron(), '0 W');
+        state.setState('ruoguang2');
+        assert.equal(state.currentState.instance.useElectron(), '1 W');
+        state.setState('ruoguang4');
+        assert.equal(state.currentState.instance.useElectron(), '3 W');
     });
   });
 });

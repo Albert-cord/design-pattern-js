@@ -1,8 +1,11 @@
 const assert = require('assert');
-describe('Array', function() {
-  describe('#indexOf()', function() {
-    it('should return -1 when the value is not present', function() {
-      assert.equal([1, 2, 3].indexOf(4), -1);
+import Single from '../../src/Single';
+describe('Single', function() {
+  describe('#getInstance()', function() {
+    it('should return instance', function() {
+      let single = new Single(((...arg) => {return [...args];}));
+      let ret = single.getInstance(1, 2, 3, 4, 5);
+      assert.equal(ret, single.getInstance(1, 2, 3, 4, 5));
     });
   });
 });

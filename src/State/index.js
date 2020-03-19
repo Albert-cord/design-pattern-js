@@ -37,7 +37,7 @@ const beforeFunction = function (superClass, subClass) {
 
 // to do:add array operation function ?
 export default class State {
-    constructor({fns = [], keyMethod = []}) {
+    constructor({fns = [], keyMethods = [], initialState, initialStateIndex}) {
         // fns set to a arrayObject?
         // fns -> classes -> states -> stateHashMap
         /* just as 
@@ -61,11 +61,12 @@ export default class State {
         this.classes = fns.slice(0);
         this.length = this.classes.length;
         this.noop = Object.create(null);
-        this.keyMethod = keyMethod;
+        this.keyMethod = Array.isArray(keyMethods) ? keyMethods : (keyMethods == undefined ? [] : [keyMethods]);
         this.currentState = null;
         this.currentStateIndex = 0;
         this.stateIndexMap = {};
-
+        this.initialState = initialState;
+        this.initialStateIndex = initialStateIndex;
         this.initState();
 
     }
@@ -94,7 +95,7 @@ export default class State {
                     state: fn.state,
                     nextState: fn.nextState
                 }
-                if(fn.state) {
+                if(fn.state || fn.fn.name) {
                     this.stateIndexMap[fn.state] = {
                         state:this.states[i],
                         index: i
@@ -164,7 +165,7 @@ export default class State {
                 }
             } else {
                 keyMethod.forEach(method => {
-                    if (typeof stateInstance[method] === 'function' && stateInstance[method].nextState) {
+                    if (typeof stateInstance[method] === 'function' && stateInstance[method].nextState) {``
                         stateInstance[method] = beforeFunction(stateInstance[method], function(){
 
                             let next = self.stateIndexMap[stateInstance[method].nextState];
@@ -182,7 +183,14 @@ export default class State {
             }
             
         });
-        this.currentStateIndex = 0;
+        // initialState can be seted?
+        if(this.initialStateIndex) {
+            this.currentStateIndex = (isType(this.initialStateIndex, 'number') && this.initialStateIndex % this.classes.length) || 0;
+        } else if(this.initialState) {
+            this.currentStateIndex = (isType(this.initialState, 'string') && this.stateIndexMap[this.initialState] && this.stateIndexMap[this.initialState].index) || 0;
+        } else {
+            this.currentStateIndex = 0;
+        }
         this.length = this.classes.length;
         this.setState(this.states[this.currentStateIndex]);
     }
