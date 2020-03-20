@@ -1,4 +1,4 @@
-
+import {hasOwnProperty, designPatternConsole} from '../utils';
 // chain1 -> chain2 -> chain3 -> chain4 -> default
 // not if else, just pass the request to next chain to done;
 // to do: add support to Promise;
@@ -22,7 +22,7 @@ class Chain {
         let nextKey = args[0];
         let ret = this.fn.apply(null, args.slice(1));
         // nextKey is a serialeable string
-        console.log(nextKey, args, ret, this.next);
+        designPatternConsole(nextKey, args, ret, this.next);
         if (ret === nextKey) return this.next && this.next.passRequest.apply(this.next, args);
         return ret;
     }

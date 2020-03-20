@@ -1,0 +1,4 @@
+[template]
+    template = /gitCommitTemplate
+[alias]
+    change-of-last-month = !sh -c 'git log --format=\"%s (%h)\" --reverse --grep \"^\\(docs\\|feat\\|fix\\|perf\\|refactor\\|test\\|optimize\\)\" --since=`date -v-1m +\"%Y-%m-01\"` --before=`date +\"%Y-%m-01\"` | sed \"s/([^)*):/:/\" | sort -k1,1 -s'

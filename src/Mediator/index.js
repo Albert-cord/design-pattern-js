@@ -1,4 +1,4 @@
-
+import {isType, designPatternConsole} from '../utils';
 
 // it is usually realized by two condition, 
 // first: publishSubscribe, just patch message and pass arguments
@@ -8,12 +8,12 @@
 // Principle of least knowledge
 const mediatorFactory = function(operations) {
     let mediatorOperations = {};
-    if (Object.prototype.toString.call(operations) === '[object Object]') {
+    if ( isType(operations, 'object') ) {
         mediatorOperations = operations;
     } else {
         if (Array.isArray(operations)) {
             operations.forEach(method => {
-                console.log(operations, method)
+                designPatternConsole(operations, method)
                 if(typeof method === 'function') {
                     mediatorOperations[method.name] = method;
                 }
@@ -22,9 +22,9 @@ const mediatorFactory = function(operations) {
     }
 
     return {
-        receiverMessage(message, ...args) {
+        async receiverMessage(message, ...args) {
             if (typeof mediatorOperations[message] === 'function') {
-                mediatorOperations[message].apply(this, args);
+               return await mediatorOperations[message].apply(this, args);
             }
         },
         mediatorOperations

@@ -1,4 +1,5 @@
 
+import {hasOwnProperty} from '../utils';
 // use shared tech to support a lot of fine-grained object;
 
 // flyWeight
@@ -22,13 +23,13 @@ const flyWeightManager = (function() {
         // return what ?
         add(id, fn, ...args) {
             // or return fn(id, flyWeightDataBase, ...args) ?
-            flyWeightDataBase[id] = fn(...args);
+            return flyWeightDataBase[id] = fn(...args);
         },
         // all externalState is necessary ?
         setExternalState(id, flyWeightObject) {
             let flyWeightObjectData = flyWeightDataBase[id];
             for (let prop in flyWeightObjectData) {
-                if (Object.prototype.toString.call(flyWeightObjectData, prop)) {
+                if (hasOwnProperty(flyWeightObjectData, prop)) {
                     flyWeightObject[prop] = flyWeightObjectData[prop];
                 }
             }

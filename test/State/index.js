@@ -166,5 +166,9 @@ describe('State', function() {
         state.setState('ruoguang4');
         assert.equal(state.currentState.instance.useElectron(), '3 W');
     });
+
+    it("#parameter pattern: {}, should throw error", function() {
+        assert.throws(new State({}), DesignPatternError);
+    });
   });
 });

@@ -1,4 +1,4 @@
-import {designPatternConsole} from '../utils';
+import {designPatternConsole, hasOwnProperty} from '../utils';
 
 export default class EventEmitter {
     // rollup cannot support class's static property;
@@ -8,21 +8,27 @@ export default class EventEmitter {
     constructor(isOnOfflineStack = false) {
         this.events = {};
         this.listenersLength = 0;
-        this.maxListeners = EventEmitter.defaultMaxListeners;
-        this.maxEvents = EventEmitter.defaultMaxEvents;
+        this._maxListeners = EventEmitter.defaultMaxListeners;
+        this._maxEvents = EventEmitter.defaultMaxEvents;
 
         // offlineStack
         this.isOnOfflineStack = isOnOfflineStack;
         this.offlineStack = {};
     }
-    addEventListener(...args) {
-        return this.on.apply(this, args);
+    async addEventListener(...args) {
+        return await this.on.apply(this, args);
     }
     setMaxListeners(n) {
         n = n !== n ? 1 : n;
-        n = typeof n === number ? n : 1;
-        this.maxListeners = n || 1;
+        n = typeof n === 'number' ? n : 1;
+        this._maxListeners = n || 1;
     }
+    setMaxEvents(n) {
+        n = n !== n ? 1 : n;
+        n = typeof n === 'number' ? n : 1;
+        this._maxEvents = n || 1;
+    }
+
     async emit(event, ...args) {
         let evts = this.events[event]
         if(evts && evts.length > 0) {
@@ -33,7 +39,7 @@ export default class EventEmitter {
                 }
             }
 
-            // return true;
+            return true;
         } else {
             if(this.isOnOfflineStack) {
                 this.offlineStack[event] = this.offlineStack[event] || [];
@@ -57,7 +63,7 @@ export default class EventEmitter {
         return this.events[eventName] ? this.events[eventName].slice(0) : [];
     }
     off(event, fn) {
-        if(!Object.prototype.hasOwnProperty.call(this.events, event)) return false;
+        if(!hasOwnProperty(this.events, event)) return false;
         if(typeof fn === 'function') {
             let index = this.events[event].indexOf(fn);
 
@@ -76,46 +82,52 @@ export default class EventEmitter {
 
     // if event fn is a async function?
     // how to make sure fns sync emit?
-    on(event, fn) {
+    async on(event, fn) {
         event = String(event);
-        if(Object.prototype.hasOwnProperty.call(this.events, event)) {
-            if(this.listenersLength >= this.maxListeners) {
+        if(hasOwnProperty(this.events, event)) {
+            if(this.listenersLength >= this._maxListeners) {
                 designPatternConsole('error', '超出监听数量限制');
-                return;
+                return false;
             }
         } else {
             this.events[event] = [];
             this.listenersLength++;
         }
-        if(this.events[event].length >= this.maxEvents) {
+        if(this.events[event].length >= this._maxEvents) {
             designPatternConsole('error', '超出监听事件数量限制');
 
-            return;
+            return false;
         }
 
         this.events[event].push(fn);
         // when each finish, data is empty at the same time;
+        await this.callOfflineStackEvents(event, fn);
+        return true;
+    }
+
+    async callOfflineStackEvents(event, emitWayFn) {
         if(this.isOnOfflineStack && this.offlineStack[event]) {
-            this.offlineStack[event].forEach(args => {
-                fn.apply(this, args);
-            })
+            for (const args of this.offlineStack[event]) {
+                await emitWayFn.apply(this, args);
+            }
             this.offlineStack[event] = [];
         }
     }
-    once(event, fn) {
+
+    async once(event, fn) {
         event = String(event);
-        if(Object.prototype.hasOwnProperty.call(this.events, event)) {
-            if(this.listenersLength >= this.maxListeners) {
+        if(hasOwnProperty(this.events, event)) {
+            if(this.listenersLength >= this._maxListeners) {
                 designPatternConsole('error', '超出监听数量限制');
-                return;
+                return false;
             }
         } else {
             this.events[event] = [];
             this.listenersLength++;
         }
-        if(this.events[event].length >= this.maxEvents) {
+        if(this.events[event].length >= this._maxEvents) {
             designPatternConsole('error', '超出监听事件数量限制');
-            return;
+            return false;
         }
 
         let onceFn = function(...args) {
@@ -127,13 +139,9 @@ export default class EventEmitter {
         }
 
         this.events[event].push(onceFn);
+        // 没有意义去做onceFn，离线的
+        this.callOfflineStackEvents(event, fn);
 
-        if(this.isOnOfflineStack && this.offlineStack[event]) {
-            this.offlineStack[event].forEach(args => {
-                onceFn.apply(this, args);
-            })
-            this.offlineStack[event] = [];
-        }
     }
     removeListener(...args){
         return this.off.apply(this, args);
