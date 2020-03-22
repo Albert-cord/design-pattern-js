@@ -1,4 +1,6 @@
 
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import {beforeFunction, afterFunction} from './Decorator';
 import DutyChains from './DutyChains';
 import FlyWeight from './FlyWeight';

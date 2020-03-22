@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from 'rollup-plugin-replace';
 import babel from 'rollup-plugin-babel';
 import {uglify} from 'rollup-plugin-uglify';
-// import json from '@rollup/plugin-json';
+import json from '@rollup/plugin-json';
 const env = process.env.NODE_ENV;
 export default [
 
@@ -33,8 +33,8 @@ export default [
             replace({
                 'process.env.NODE_ENV': JSON.stringify(env)
             }),
-            uglify(),
-            // json()
+            uglify(), 
+            json()
 
         ],
         

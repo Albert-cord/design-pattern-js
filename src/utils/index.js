@@ -2,9 +2,19 @@ export function hasOwnProperty(obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function isType(obj, type) {
+function isOneType(obj, type) {
     let realType = typeof type;
     return Object.prototype.toString.call(obj) === `[object ${realType === 'string' ? escapeStrToType(type) : realType}]`;
+}
+
+export function isType(obj, type, ...otherType) {
+    if(!Array.isArray(otherType) || otherType.length === 0) {
+       return isOneType(obj, type); 
+    } else {
+        return [type, ...otherType].some(t => {
+            return isOneType(obj, t);
+        })
+    }
 }
 
 

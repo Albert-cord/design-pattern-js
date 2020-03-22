@@ -1,13 +1,16 @@
 const assert = require('assert');
 import State from '../../src/State';
+import {throwDesignPatternError} from '../../src/utils'
+// const State = require('../../src/State');
 
 describe('State', function() {
   describe("inital and tests", function() {
     let state;
     let classes;
+    let OffLightState, OffLightState1, OffLightState2, OffLightState3;
     before(function() {
                 // use 
-                let OffLightState = function () { this.a = 0; return this;};
+                OffLightState = function () { this.a = 0; return this;};
                 OffLightState.prototype.buttonWasPressed = function () {
                     // console.log('弱光'); // offLightState 对应的行为
                     return 0;
@@ -19,7 +22,7 @@ describe('State', function() {
                 };
 
         
-                let OffLightState1 = function () { this.aa = 1; return this;};
+                OffLightState1 = function () { this.aa = 1; return this;};
                 OffLightState1.prototype.buttonWasPressed = function () {
                     // console.log('弱光1'); // offLightState 对应的行为
                     return 1;
@@ -30,7 +33,7 @@ describe('State', function() {
                     return '1 W';
                 };
 
-                let OffLightState2 = function () { this.aaa = 2; return this;};
+                OffLightState2 = function () { this.aaa = 2; return this;};
                 OffLightState2.prototype.buttonWasPressed = function () {
                     // console.log('弱光2'); // offLightState 对应的行为
                     return 2;
@@ -41,7 +44,7 @@ describe('State', function() {
                     return '2 W';
                 };
 
-                let OffLightState3 = function () { this.aaaa = 3;return this;};
+                OffLightState3 = function () { this.aaaa = 3;return this;};
                 OffLightState3.prototype.buttonWasPressed = function () {
                     // console.log('弱光3'); // offLightState 对应的行为
                     return 3;
@@ -168,7 +171,7 @@ describe('State', function() {
     });
 
     it("#parameter pattern: {}, should throw error", function() {
-        assert.throws(new State({}), DesignPatternError);
+        assert.throws(new State({}), throwDesignPatternError('fns cannot without function', 'parameterError'));
     });
   });
 });

@@ -7,3 +7,5 @@ debug.log
 .nyc_output
 
 coverage.lcov
+
+_reports

@@ -131,11 +131,9 @@ export default class EventEmitter {
         }
 
         let onceFn = function(...args) {
-            if(fn) {
-                let ret = fn.apply(this, args);
-                fn = null;
-                return ret;
-            }
+            let ret = fn.apply(this, args);
+            this.off(event, fn);
+            return ret;
         }
 
         this.events[event].push(onceFn);

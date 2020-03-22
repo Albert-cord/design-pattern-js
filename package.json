@@ -10,9 +10,12 @@
     }
   },
   "scripts": {
-    "test": "mocha ./test/index.js",
+    "test": "karma start ./script/karma.conf.js",
     "prod": "rollup --config rollup.config.js",
-    "dev": "rollup --config rollup.dev.config.js"
+    "dev": "rollup --config rollup.dev.config.js",
+    "coverage": "nyc npm run test && nyc report",
+    "test:mocha": "mocha ./test/testMochaUse.js",
+    "coveralls": "nyc npm run test && nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
@@ -30,14 +33,31 @@
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
     "@rollup/plugin-commonjs": "11.0.2",
+    "@rollup/plugin-json": "^4.0.2",
+    "babel-loader": "^8.1.0",
+    "codecov": "^3.6.5",
+    "coveralls": "^3.0.11",
     "cross-env": "^7.0.2",
+    "karma": "^4.4.1",
+    "karma-coverage": "^2.0.1",
+    "karma-html-detailed-reporter": "^2.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-rollup-preprocessor": "^7.0.3",
+    "karma-webpack": "^4.0.2",
     "mocha": "^6.2.0",
+    "nyc": "^15.0.0",
     "rollup": "^2.0.6",
     "rollup-plugin-alias": "2.0.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-eslint": "7.0.0",
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-uglify": "6.0.3"
+    "rollup-plugin-uglify": "6.0.3",
+    "webpack": "^4.42.0"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4",
+    "regenerator-runtime": "^0.13.5",
+    "lodash": "^4.17.15"
   }
 }

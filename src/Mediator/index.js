@@ -22,9 +22,16 @@ const mediatorFactory = function(operations) {
     }
 
     return {
+        // async and sync API ...
+        // should distinct?
         async receiverMessage(message, ...args) {
             if (typeof mediatorOperations[message] === 'function') {
-               return await mediatorOperations[message].apply(this, args);
+                let ret = mediatorOperations[message].apply(this, args);
+                if(!isType(ret, 'promise')) {
+                    return ret;
+                } else {
+                    return await ret;
+                }
             }
         },
         mediatorOperations

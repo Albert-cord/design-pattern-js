@@ -23,7 +23,8 @@ const flyWeightManager = (function() {
         // return what ?
         add(id, fn, ...args) {
             // or return fn(id, flyWeightDataBase, ...args) ?
-            return flyWeightDataBase[id] = fn(...args);
+            flyWeightDataBase[id] = fn.call(null, ...args);
+            return flyWeightDataBase[id];
         },
         // all externalState is necessary ?
         setExternalState(id, flyWeightObject) {
@@ -34,7 +35,8 @@ const flyWeightManager = (function() {
                 }
             }
             return flyWeightObject;
-        }
+        },
+        flyWeightDataBase
     }
 })();
 

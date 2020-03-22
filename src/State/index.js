@@ -25,10 +25,13 @@ const inheritPrototype = function(prevClass, nextClass) {
 
 const beforeFunction = function (superClass, subClass) {
     let func = function (...args) {
-        superClass.apply(this, args);
+        let ret = superClass.apply(this, args);
         inheritPrototype(subClass, superClass);
         // inheritPrototype(superClass, subClass);
-        return subClass.apply(this, args);
+        // should return superClass or subClass?
+        // return subClass.apply(this, args);
+        subClass.apply(this, args);
+        return ret;
     }
     inheritPrototype(subClass, func);
     designPatternConsole(subClass.nextState, func.nextState, superClass.nextState)
