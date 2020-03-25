@@ -6,6 +6,9 @@ debug.log
 
 .nyc_output
 
+index.html
+
+
 coverage.lcov
 
 _reports
