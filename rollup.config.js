@@ -33,7 +33,7 @@ export default [
             replace({
                 'process.env.NODE_ENV': JSON.stringify(env)
             }),
-            uglify(), 
+            process.env.NODE_ENV !== 'development' && uglify(), 
             json()
 
         ],

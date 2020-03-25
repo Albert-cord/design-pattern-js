@@ -26,7 +26,7 @@ describe('FlyWeight', function() {
       var m = flyWeightManager.setExternalState('female', {hobby: 'what', worried: 'what'});
 
       assert.deepEqual(o, man);
-      assert.deepEqual(o, man);
+      assert.deepEqual(m, woman);
 
       assert.deepEqual(o, {name: 'Albert', hobby: 'program, sing, dance, Astronomy, basketball, cook, not hiphop', worried: 'how to make more money, how to ...'});
       assert.deepEqual(m, {uniqueName: "Albert's Wife", hobby: 'what', worried: 'what'});

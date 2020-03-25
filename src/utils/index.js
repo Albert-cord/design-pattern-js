@@ -23,16 +23,28 @@ function escapeStrToType(str) {
     return str.substring(0, 1).toUpperCase().concat(str.substring(1).toLowerCase());
 }
 
-class DesignPatternError extends Error {
-    constructor(message, type) {
-        super(message);
-        this.type = type;
-    }
+// why?
+// class DesignPatternError extends Error {
+//     constructor(message, type) {
+//         super(message);
+//         this.type = type;
+//         this.name = type;
+//         this.stack = (new Error()).stack;
+//     }
 
-    toString() {
-        return `type: ${this.type}; message: ${this.message}`;
-    }
-}
+//     toString() {
+//         return `type: ${this.type}; message: ${this.message}`;
+//     }
+// }
+
+function DesignPatternError(message, type) {
+    this.name = 'DesignPatternError';
+    this.message = `${type}::${message}` || 'Default Message';
+
+    this.stack = (new Error()).stack;
+  }
+DesignPatternError.prototype = Object.create(Error.prototype);
+DesignPatternError.prototype.constructor = DesignPatternError;
 
 export function throwDesignPatternError(message, type) {
     return new DesignPatternError(message, type);

@@ -75,6 +75,9 @@ export default class State {
     }
 
     initState() {
+        if(this.classes.length === 0) {
+            throw throwDesignPatternError('parameterError: fns cannot without function', 'StateError');
+        }
         if(this.length === 0) {
             this.states[0] = this.noop;
             return;
@@ -136,7 +139,8 @@ export default class State {
                     // if no nextState, how to work in state-pattern, just ignore?
                     if (
                         // so get nextState from method's static variable?
-                    typeof stateInstance[method] === 'function' && stateInstance[method].nextState) {
+                        // never need nexState
+                    typeof stateInstance[method] === 'function' /**  && stateInstance[method].nextState */) {
                         designPatternConsole(stateInstance[method], stateInstance[method].nextState)
                         let nextState = stateInstance[method].nextState;
                         stateInstance[method] = beforeFunction(stateInstance[method], function(){
@@ -168,13 +172,13 @@ export default class State {
                 }
             } else {
                 keyMethod.forEach(method => {
-                    if (typeof stateInstance[method] === 'function' && stateInstance[method].nextState) {``
+                    if (typeof stateInstance[method] === 'function' /** && stateInstance[method].nextState */) {``
                         stateInstance[method] = beforeFunction(stateInstance[method], function(){
 
                             let next = self.stateIndexMap[stateInstance[method].nextState];
                             next = next || self.stateIndexMap[state.nextState];
                             if(next) {
-                                this.state.setState(next[state]);
+                                this.state.setState(next.state);
                                 self.currentStateIndex = next.index;
                             } else {
                                 this.state.setState(self.states[(++self.currentStateIndex) % self.length]);
@@ -198,6 +202,11 @@ export default class State {
         this.setState(this.states[this.currentStateIndex]);
     }
 
+    rebuildState(...fn) {
+        this.classes = fn;
+        this.initState();
+    }
+
 
     // use object proxy to change states and stateMap when fns or state change?
 
@@ -211,7 +220,14 @@ export default class State {
         // currentState is important.
         // if currentState has't keyMethod
         designPatternConsole(state);
-        this.currentState = state;
+        if(isType(state, 'string')) {
+            this.currentState = this.states.find((s => {
+                if(s.state === state) return true;
+            }));
+            this.currentState = this.currentState || state;
+        } else {
+            this.currentState = state;
+        }
     }
 }
 

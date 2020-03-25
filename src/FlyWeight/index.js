@@ -29,12 +29,12 @@ const flyWeightManager = (function() {
         // all externalState is necessary ?
         setExternalState(id, flyWeightObject) {
             let flyWeightObjectData = flyWeightDataBase[id];
-            for (let prop in flyWeightObjectData) {
-                if (hasOwnProperty(flyWeightObjectData, prop)) {
-                    flyWeightObject[prop] = flyWeightObjectData[prop];
+            for (let prop in flyWeightObject) {
+                if (hasOwnProperty(flyWeightObject, prop)) {
+                    flyWeightObjectData[prop] = flyWeightObject[prop];
                 }
             }
-            return flyWeightObject;
+            return flyWeightObjectData;
         },
         flyWeightDataBase
     }

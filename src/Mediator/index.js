@@ -6,35 +6,36 @@ import {isType, designPatternConsole} from '../utils';
 // identify itself,eg:id..., by a public interface
 
 // Principle of least knowledge
-const mediatorFactory = function(operations) {
-    let mediatorOperations = {};
-    if ( isType(operations, 'object') ) {
-        mediatorOperations = operations;
-    } else {
-        if (Array.isArray(operations)) {
-            operations.forEach(method => {
-                designPatternConsole(operations, method)
-                if(typeof method === 'function') {
-                    mediatorOperations[method.name] = method;
-                }
-            })
+class MediatorFactory {
+    constructor(operations) {
+        this.mediatorOperations = {};
+        if ( isType(operations, 'object') ) {
+            this.mediatorOperations = operations;
+        } else {
+            if (Array.isArray(operations)) {
+                operations.forEach(method => {
+                    designPatternConsole(operations, method)
+                    if(typeof method === 'function') {
+                        this.mediatorOperations[method.name] = method;
+                    }
+                })
+            }
         }
     }
-
-    return {
-        // async and sync API ...
-        // should distinct?
-        async receiverMessage(message, ...args) {
-            if (typeof mediatorOperations[message] === 'function') {
-                let ret = mediatorOperations[message].apply(this, args);
-                if(!isType(ret, 'promise')) {
-                    return ret;
-                } else {
-                    return await ret;
-                }
-            }
-        },
-        mediatorOperations
+    // async and sync API ...
+    // should distinct?
+    receiverMessage(message, ...args) {
+        if (typeof this.mediatorOperations[message] === 'function') {
+            return this.mediatorOperations[message].apply(this, args);
+        }
+    }
+    async receiverMessageAsync(message, ...args) {
+        let msg = this.mediatorOperations[message];
+        if (isType(msg, 'function')) {
+            return await this.mediatorOperations[message].apply(this, args);
+        } else if(isType(msg, 'promise')) {
+            return await this.mediatorOperations[message].then(...args);
+        }
     }
 }
-export default mediatorFactory;
+export default MediatorFactory;

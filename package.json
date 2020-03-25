@@ -11,8 +11,9 @@
   },
   "scripts": {
     "test": "karma start ./script/karma.conf.js",
+    "test:prod": "npm run prod && npm run test",
     "prod": "rollup --config rollup.config.js",
-    "dev": "rollup --config rollup.dev.config.js",
+    "dev": "cross-env NODE_ENV=development rollup --config --watch rollup.config.js",
     "coverage": "nyc npm run test && nyc report",
     "test:mocha": "mocha ./test/testMochaUse.js",
     "coveralls": "nyc npm run test && nyc report --reporter=text-lcov > coverage.lcov && codecov"

@@ -26,10 +26,11 @@ module.exports = function(config) {
         // basePath: './',
         // autoWatch: false,
         frameworks: ['mocha'],
+        autoWatchBatchDelay: 10000,
         //...
         files: [
             '../test/index.js',
-            '../test/**/*.js'
+            // '../test/**/*.js'
         ],
     
         // coverage reporter generates the coverage
@@ -41,7 +42,7 @@ module.exports = function(config) {
             // (these files will be instrumented by Istanbul)
             '../src/**/*.js': ['coverage'],
             '../test/index.js': ['webpack'],
-            '../test/**/*.js': ['webpack']
+            // '../test/**/*.js': ['webpack']
         },
     
         // optionally, configure the reporter
