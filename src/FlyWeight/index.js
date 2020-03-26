@@ -17,30 +17,30 @@ const FlyWeightFactory = function(factoryClass) {
     }
 }
 
-const flyWeightManager = (function() {
-    const flyWeightDataBase = {};
-    return {
-        // return what ?
-        add(id, fn, ...args) {
-            // or return fn(id, flyWeightDataBase, ...args) ?
-            flyWeightDataBase[id] = fn.call(null, ...args);
-            return flyWeightDataBase[id];
-        },
-        // all externalState is necessary ?
-        setExternalState(id, flyWeightObject) {
-            let flyWeightObjectData = flyWeightDataBase[id];
-            for (let prop in flyWeightObject) {
-                if (hasOwnProperty(flyWeightObject, prop)) {
-                    flyWeightObjectData[prop] = flyWeightObject[prop];
-                }
-            }
-            return flyWeightObjectData;
-        },
-        flyWeightDataBase
-    }
-})();
+class FlyWeightManager {
 
-export default flyWeightManager;
+    constructor() {
+        this.flyWeightDataBase = {};
+    }
+
+    add(id, fn, ...args) {
+        // or return fn(id, flyWeightDataBase, ...args) ?
+        this.flyWeightDataBase[id] = fn.call(null, ...args);
+        return this.flyWeightDataBase[id];
+    }
+    // all externalState is necessary ?
+    setExternalState(id, flyWeightObject) {
+        let flyWeightObjectData = this.flyWeightDataBase[id];
+        for (let prop in flyWeightObject) {
+            if (hasOwnProperty(flyWeightObject, prop)) {
+                flyWeightObjectData[prop] = flyWeightObject[prop];
+            }
+        }
+        return flyWeightObjectData;
+    }
+}
+
+export default FlyWeightManager;
 
 
 

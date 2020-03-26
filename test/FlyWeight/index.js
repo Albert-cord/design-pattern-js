@@ -1,4 +1,4 @@
-import flyWeightManager from '../../src/FlyWeight';
+import FlyWeightManager from '../../src/FlyWeight';
 // const flyWeightManager = require('../../src/FlyWeight');
 
 const assert = require('assert');
@@ -9,6 +9,7 @@ describe('FlyWeight', function() {
     // 歧义:
     // (name) => {name}
     // (name) => {return {name};}
+    let flyWeightManager = new FlyWeightManager();
     man = flyWeightManager.add('male', (name) => {return {name};}, 'Albert');
     woman = flyWeightManager.add('female', (name) => {return {uniqueName: name};}, "Albert's Wife");
   })

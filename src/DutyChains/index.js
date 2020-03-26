@@ -11,15 +11,20 @@ import isEqual from 'lodash/isEqual';
 // to do: add support to Promise;
 
 export class Chain {
-    constructor(fn, idx) {
+    constructor({name, fn}, idx) {
         if(!isType(fn, 'function')) {
             // throw new Error('fn must be a function');    
             throwDesignPatternError('fn must be a function', 'ChainsError');        
         }
         this.fn = fn;
-        this.name = fn.name;
+        
+        this.name = name;
         this.next = null;
         this.indexInChains = idx;
+    }
+
+    setName(name) {
+        this.name = name;
     }
 
     setNext(chain) {
@@ -75,13 +80,13 @@ export default class DutyChains {
     }
 
     initChains(fns) {
-        let headFn = fns.shift();
-        this.head = new Chain(headFn, 0);
-        this.hashChainMap.set(headFn.name, this.head);
+        let headFnObj = fns.shift();
+        this.head = new Chain(headFnObj, 0);
+        this.hashChainMap.set(headFnObj.name, this.head);
         let node = this.head;
-        fns.forEach((fn, i, arr) => {
-            node = node.setNext(new Chain(fn, i + 1));
-            this.hashChainMap.set(fn.name, node);
+        fns.forEach((fnObj, i, arr) => {
+            node = node.setNext(new Chain(fnObj, i + 1));
+            this.hashChainMap.set(fnObj.name, node);
         });
     }
 
@@ -95,9 +100,26 @@ export default class DutyChains {
         return this.startUseContext({context: null, args});
     }
 
-    async startUseContextAsync({context = null, args}) {
+    getContextAndArgs(contextWrap, argsWrap) {
+        let context, args;
+        if(argsWrap.length === 0) {
+            if(!isType(contextWrap, 'object')) {
+                designPatternConsole('startUseContextAsync"s parameter must be object or context and ...args', 'DutyChainsError');
+                return;
+            }
+            context = contextWrap.context;
+            args = contextWrap.args;
+        } else {
+            context = contextWrap;
+            args = argsWrap;
+        }
+        return {context, args};
+    }
+
+    async startUseContextAsync(contextWrap, ...argsWrap) {
+        const {context, args} = this.getContextAndArgs(contextWrap, argsWrap);
         args.unshift(this.nextKey, context);
-        let tailNode = this.hashChainMap.get(this.fns[this.length - 1]);
+        let tailNode = this.hashChainMap.get(this.fns[this.length - 1].name);
         if(tailNode.next !== null) {
             tailNode.setNext(null);
         }
@@ -105,7 +127,9 @@ export default class DutyChains {
             return await this.head.passRequestAsync.apply(this.head, args);
     }
 
-    startUseContext({context = null, args}) {
+    startUseContext(contextWrap, ...argsWrap) {
+
+        const {context, args} = this.getContextAndArgs(contextWrap, argsWrap);
         args.unshift(this.nextKey, context);
         // 考虑闭环链的可能
         let tailNode = this.hashChainMap.get(this.fns[this.length - 1].name);
@@ -187,14 +211,16 @@ export default class DutyChains {
             if(fns) {
                 let l = fns.length;
                 for(let j = 0; j < l; j++) {
-                    let fn = fns[j];
+                    let curFnObj = fns[j];
+                    let fn = curFnObj.fn;
+                    let name = curFnObj.name;
                     if(!fn) continue;
-                    if(this.hashChainMap.has(fn.name)) {
-                        let tmpNode = this.hashChainMap.get(fn.name);
+                    if(this.hashChainMap.has(name)) {
+                        let tmpNode = this.hashChainMap.get(name);
                         // for of get tmpNode.parent? iterator fn
                         // setter parent is double linkedlist
                         // consider, now iterator
-                        let tmpIdx = this.fns.findIndex((f) => {return fn.name === f.name});
+                        let tmpIdx = this.fns.findIndex((f) => {return name === f.name});
                         // 如果是之前的。。。那之前的还要替换
                         if(tmpIdx === chainNum) {
                             // 这里下标还是要加一。。。
@@ -202,20 +228,19 @@ export default class DutyChains {
                             isSteadOf = true;
     
                         } else if(tmpIdx === 0) {
-                            this.head = new Chain(fn, 0);
-                            this.head.setNext(this.hashChainMap.get(this.fns[(0+1)]));
-                            this.hashChainMap.set(fn.name, this.head);
-                            fns.splice(fns.indexOf(fn), 1);
+                            this.head = new Chain(curFnObj, 0);
+                            this.head.setNext(this.hashChainMap.get(this.fns[(0+1)].name));
+                            this.hashChainMap.set(name, this.head);
+                            fns.splice(fns.indexOf(curFnObj), 1);
                         } else {
-                            let curNode = new Chain(fn, tmpIdx);
-                            this.hashChainMap.get(this.fns[tmpIdx - 1]).next = curNode;
+                            let curNode = new Chain(curFnObj, tmpIdx);
+                            this.hashChainMap.get(this.fns[tmpIdx - 1].name).next = curNode;
                             curNode.setNext(tmpNode.next);
                             tmpNode.next = null;
-                            this.hashChainMap.set(fn.name, curNode);
+                            this.hashChainMap.set(name, curNode);
                             tmpNode = null;
-                            fns.splice(fns.indexOf(fn), 1);
+                            fns.splice(fns.indexOf(curFnObj), 1);
                         }
-
                     } else {
 
                     }
@@ -273,8 +298,8 @@ export default class DutyChains {
     }
 
     insertByPosition(chainNum, fns, isSplice = false) {
-        if(!isType(fns, 'array', 'function')) {
-            throwDesignPatternError('insertByPosition second parameter must by arrayOf function or one function', 'DutuChainsError');
+        if(!isType(fns, 'array')) {
+            throwDesignPatternError('insertByPosition second parameter must by arrayOf function', 'DutuChainsError');
         }
 
         let index = this.getIndexByNumOrKey(chainNum);

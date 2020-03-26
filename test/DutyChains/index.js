@@ -1,7 +1,5 @@
 import DutyChains from '../../src/DutyChains';
 import {Chain} from '../../src/DutyChains';
-// const DutyChains = require('../../src/DutyChains');
-// const {Chain} = require('../../src/DutyChains');
 
 
 const assert = require('assert');
@@ -43,10 +41,10 @@ describe('DutyChains', function() {
   describe('#DutyChains', function() {
     let fns, dc, a, b, m;
     beforeEach(function() {
-      fns = [fn, otherFn];
+      fns = [{fn, name: 'fn'}, {fn: otherFn, name: 'otherFn'}];
       
-      a = new Chain(fn, 0);
-      b = new Chain(otherFn, 1);
+      a = new Chain({fn: fn, name: 'fn'}, 0);
+      b = new Chain({fn: otherFn, name: 'otherFn'}, 1);
       a.setNext(b);
       m = new Map();
       m.set('fn', a);
@@ -121,46 +119,37 @@ describe('DutyChains', function() {
         }
       };
 
-      let fns = [fn, otherFn, insertFn, insteadOfFn];
+      let fns = [{fn, name: 'fn'}, {fn: otherFn, name: 'otherFn'}, {fn: insertFn, name: 'insertFn'}, {fn: insteadOfFn, name: 'insteadOfFn'}];
       
-      dc = new DutyChains({nextKey, fns: fns.slice(0, 2)});
-      assert.equal(dc.insert(0, fns[2]), true);
+      dc = new DutyChains({nextKey, fns: [{fn, name: 'fn'}, {fn: otherFn, name: 'otherFn'}]});
+      assert.equal(dc.insert(0, {fn: insertFn, name: 'insertFn'}), true);
       dc.start(() => true, () => false, () => false);
       assert.equal(checkRet, 'insertFn');
       // mocha's Context cause function name lost
-      // assert.deepEqual(dc.toString(), 'fn->insertFn->otherFn::0->1->2');
-      assert.deepEqual(dc.fns, [fns[0], fns[2], fns[1]]);
+      assert.deepEqual(dc.toString(), 'fn->insertFn->otherFn::0->1->2');
+      assert.deepEqual(dc.fns, [{fn, name: 'fn'}, {fn: insertFn, name: 'insertFn'}, {fn: otherFn, name: 'otherFn'}]);
       dc.instead(0);
-      // assert.deepEqual(dc.toString(), 'insertFn->otherFn::0->1');
-      assert.deepEqual(dc.fns, [fns[2], fns[1]]);
+      assert.deepEqual(dc.toString(), 'insertFn->otherFn::0->1');
+      assert.deepEqual(dc.fns, [{fn: insertFn, name: 'insertFn'}, {fn: otherFn, name: 'otherFn'}]);
 
 
 
       dc.start(() => true, () => false, () => false);
       assert.equal(checkRet, 'insertFn');
-      // it(`why2`, function() {
-  
-      // })
-      // 这里不能用真名。。。
-      // assert.equal(dc.insert(fns[2].name, fns[3]), true);
-      assert.equal(dc.insert(0, fns[3]), true);
 
-      // assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn->otherFn::0->1->2');
+      assert.equal(dc.insert('insertFn', {fn: insteadOfFn, name: 'insteadOfFn'}), true);
 
-      assert.deepEqual(dc.fns, [fns[2], fns[3], fns[1]]);
+      assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn->otherFn::0->1->2');
+
+      assert.deepEqual(dc.fns, [{fn: insertFn, name: 'insertFn'}, {fn: insteadOfFn, name: 'insteadOfFn'}, {fn: otherFn, name: 'otherFn'}]);
       assert.equal(dc.instead(-1), true, 'dc.instead(-1)');
 
-      // it(`why1`, function() {
-  
-      // })
-      // assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn::0->1');
-      assert.deepEqual(dc.fns, [fns[2], fns[3]]);
-      assert.equal(dc.instead(-1, ...[fns[3], fns[0], fns[1]]), true, 'dc.instead(-1, ...[insteadOfFn, fn, otherFn])');      
+      assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn::0->1');
+      assert.deepEqual(dc.fns, [{fn: insertFn, name: 'insertFn'}, {fn: insteadOfFn, name: 'insteadOfFn'}]);
+      assert.equal(dc.instead(-1, ...[{fn: insteadOfFn, name: 'insteadOfFn'}, {fn, name: 'fn'}, {fn: otherFn, name: 'otherFn'}]), true, 'dc.instead(-1, ...[insteadOfFn, fn, otherFn])');      
 
-      // it(`why`, function() {
-      // })
-      // assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn->fn->otherFn::0->1->2->3');
-      assert.deepEqual(dc.fns, [fns[2], fns[3], fns[0], fns[1]]);
+      assert.deepEqual(dc.toString(), 'insertFn->insteadOfFn->fn->otherFn::0->1->2->3');
+      assert.deepEqual(dc.fns, [{fn: insertFn, name: 'insertFn'}, {fn: insteadOfFn, name: 'insteadOfFn'}, {fn, name: 'fn'}, {fn: otherFn, name: 'otherFn'}]);
 
       
       dc.start(() => false, () => false, () => false, () => false);

@@ -87,7 +87,8 @@ export default class State {
         /*
             this.states[i] = {
                 instance: new func(self);
-                state: fn.state
+                state: fn.state,
+                name,
             }
         */
 
@@ -101,13 +102,16 @@ export default class State {
                     state: fn.state,
                     nextState: fn.nextState
                 }
-                if(fn.state || fn.fn.name) {
+                // can not get fn.fn.name
+                if(fn.state) {
                     this.stateIndexMap[fn.state] = {
                         state:this.states[i],
                         index: i
                     }
                 }
-            } else if(isType(fn, 'function')) {
+            }
+            /** 
+            else if(isType(fn, 'function')) {
                 let func = beforeFunction(function (state) {
                     this.state = state;
                 }, fn)
@@ -122,7 +126,10 @@ export default class State {
                         index: i
                     }
                 }
-            } else {
+            }
+            */
+            
+            else {
                 throw throwDesignPatternError('fns cannot without function', 'parameterError');
             }
 

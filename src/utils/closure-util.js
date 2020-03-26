@@ -9,19 +9,21 @@
 //     }
 //     //otherWise deal with data;
 // }
-var closureCache = function (fn) {
+const closureCache = function (fn) {
     // use js-lru will be great without stackoverflow;
-        var cache = {};
+        let cache = {};
         return function () {
             //has a key
-            var key = Array.prototype.join.call(arguments, '');
+            let key = Array.prototype.join.call(arguments, '');
             if (cache[key]) {
                 return cache[key];
             }
             //otherWise deal with data;
             return cache[key] = fn.apply(this, arguments);
         }
-    };
+};
+
+export default closureCache;
 
 var lastLifeCyclePost = (function() {
     var args = [];

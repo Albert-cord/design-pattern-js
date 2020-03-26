@@ -18,9 +18,9 @@ describe('Mediator', function() {
       receivers[c].push(receiver);
       return receivers;
     }
-    let arr = [addReceiver];
-    let mediator = new MediatorFactory(arr)
-    let r = mediator.receiverMessage(arr[0].name, { c: 'color' });
+    let arr = [{name: 'addReceiver', fn: addReceiver}];
+    let mediator = new MediatorFactory(arr);
+    let r = mediator.receiverMessage('addReceiver', { c: 'color' });
 
     assert.deepEqual(Object.values(mediator.mediatorOperations), [addReceiver]);
     assert.deepEqual(r, {color: [{c: 'color'}]});

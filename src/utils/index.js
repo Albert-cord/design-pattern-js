@@ -50,14 +50,19 @@ export function throwDesignPatternError(message, type) {
     return new DesignPatternError(message, type);
 }
 
+const productConsolePropertys = ['error'];
 export function designPatternConsole(...args) {
-    if(process.env.NODE_ENV === 'development') {
-        if(args.length > 1 && args[0] in console) {
-            console[args[0]](...args.slice(1));
+    if(console) {
+        if(process.env.NODE_ENV === 'development') {
+            if(args.length > 1 && args[0] in console) {
+                console[args[0]](...args.slice(1));
+            } else {
+                console.log(...args);
+            }
         } else {
-            console.log(...args);
+            if(args.length > 1 && productConsolePropertys.includes(args[0])) {
+                console[args[0]](...args.slice(1));
+            }
         }
-    } else {
-
     }
 } 

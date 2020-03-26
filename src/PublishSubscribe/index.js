@@ -34,17 +34,22 @@ export default class EventEmitter {
         this._maxEvents = n || 1;
     }
 
-    _realEmit(event, ...args) {
+    emit(event, ...args) {
         // 这里不备份，off不了
         let evts = this.events[event];
         if(evts && evts.length > 0) {
             evts = evts.slice(0);
             // 长度可能会动态改
-            let evtLength = evts.length;
-            for(let i = 0; i < evtLength; i++) {
-                if(typeof evts[i] === 'function') {
-                    // 这里不能return
-                    evts[i].apply(this, args);
+            // let evtLength = evts.length;
+            // for(let i = 0; i < evtLength; i++) {
+            //     if(typeof evts[i] === 'function') {
+            //         // 这里不能return
+            //         evts[i].apply(this, args);
+            //     }
+            // }
+            for (const iterator of evts) {
+                if(typeof iterator === 'function') {
+                    iterator.apply(this, args);
                 }
             }
             evts = [];
@@ -59,12 +64,26 @@ export default class EventEmitter {
         }
     }
 
-    emit(event, ...args) {
-        return this._realEmit(event, ...args);
-    }
-
     async emitAsync(event, ...args) {
-        return await this._realEmit(event, ...args);
+        // 这里不备份，off不了
+        let evts = this.events[event];
+        if(evts && evts.length > 0) {
+            evts = evts.slice(0);
+            for (const iterator of evts) {
+                if(typeof iterator === 'function') {
+                    await iterator.apply(this, args);
+                }
+            }
+            evts = [];
+            return true;
+        } else {
+            // 这里的if block是否应该返回true?
+            if(this.isOnOfflineStack) {
+                this.offlineStack[event] = this.offlineStack[event] || [];
+                this.offlineStack[event].push(args);
+            }
+            return false;
+        }
     }
 
     eventNames() {
@@ -202,7 +221,7 @@ export default class EventEmitter {
 
         this._realOn(event, onceFn);
         // 没有意义去做onceFn，离线的
-        await this.callOfflineStackEvents(event, fn);
+        await this.callOfflineStackEventsAsync(event, fn);
     }
 
     removeListener(...args){
