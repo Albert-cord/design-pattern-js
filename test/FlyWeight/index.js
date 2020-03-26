@@ -16,6 +16,9 @@ describe('FlyWeight', function() {
 
   describe('#add()', function() {
     it('add', function() {
+      let flyWeightManager = new FlyWeightManager();
+      man = flyWeightManager.add('male', (name) => {return {name};}, 'Albert');
+      woman = flyWeightManager.add('female', (name) => {return {uniqueName: name};}, "Albert's Wife");
       assert.deepEqual(man, {name: 'Albert'});
       assert.deepEqual(woman, {uniqueName: "Albert's Wife"});
     });
@@ -23,6 +26,9 @@ describe('FlyWeight', function() {
 
   describe('#setExternalState()', function() {
     it('setExternalState', function() {
+      let flyWeightManager = new FlyWeightManager();
+      man = flyWeightManager.add('male', (name) => {return {name};}, 'Albert');
+      woman = flyWeightManager.add('female', (name) => {return {uniqueName: name};}, "Albert's Wife");
       var o = flyWeightManager.setExternalState('male', {hobby: 'program, sing, dance, Astronomy, basketball, cook, not hiphop', worried: 'how to make more money, how to ...'})
       var m = flyWeightManager.setExternalState('female', {hobby: 'what', worried: 'what'});
 
