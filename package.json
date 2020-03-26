@@ -1,8 +1,12 @@
 {
   "name": "design-pattern-js",
   "version": "1.0.0",
-  "description": "to create a useful JavaScript's design pattern library.",
-  "main": "/dist/designPatternJs.js",
+  "description": "a useful JavaScript's design pattern library",
+  "main": "/src/index.js",
+  "files": [
+    "/dist/designPatternJs.js"
+  ],
+  "author": "Albert-cord",
   "dist": {
     "prod": {
       "dir": "./dist/designPatternJs.js",
@@ -22,9 +26,17 @@
     "type": "git",
     "url": "git+https://github.com/Albert-cord/design-pattern-js.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "design-pattern-js",
+    "design-pattern",
+    "design pattern",
+    "js",
+    "library",
+    "lib",
+    "useful",
+    "utils"
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Albert-cord/design-pattern-js/issues"
   },
