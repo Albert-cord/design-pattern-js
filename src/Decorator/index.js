@@ -24,7 +24,7 @@ import {hasOwnProperty} from '../utils';
 // but how to operation new action ?
 // fn's static method cannot to invoke;
 
-export const beforeFunction = function (beforeFn, fn, compareFn) {
+export const beforeFunction = function (fn, beforeFn, compareFn) {
     let f =  function(...args) {
         if (typeof compareFn === 'function' && beforeFn.apply(this, args) !== compareFn.apply(this, args))
             // fire fn?
@@ -42,7 +42,7 @@ export const beforeFunction = function (beforeFn, fn, compareFn) {
     return f;
 }
 
-export const afterFunction = function (afterFn, fn, compareFn) {
+export const afterFunction = function (fn, afterFn, compareFn) {
     let f = function(...args) {
         let ret = fn.apply(this, args);
         if (typeof compareFn === 'function' && ret !== compareFn.apply(this, args))

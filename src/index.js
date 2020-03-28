@@ -15,6 +15,7 @@ export {DutyChains};
 export {FlyWeightManager};
 export {MediatorFactory};
 export {EventEmitter as PublishSubscribe};
+export {EventEmitter};
 export {Single};
 export {State};
 

@@ -1,5 +1,8 @@
 
 import {hasOwnProperty} from '../utils';
+import cloneDeep from 'lodash/cloneDeep';
+import extend from 'lodash/extend';
+
 // use shared tech to support a lot of fine-grained object;
 
 // flyWeight
@@ -19,25 +22,46 @@ const FlyWeightFactory = function(factoryClass) {
 
 class FlyWeightManager {
 
-    constructor() {
+    constructor(isChangeObj = false) {
         this.flyWeightDataBase = {};
+        this.isChangeObj = isChangeObj;
     }
 
     add(id, fn, ...args) {
         // or return fn(id, flyWeightDataBase, ...args) ?
         this.flyWeightDataBase[id] = fn.call(null, ...args);
-        return this.flyWeightDataBase[id];
+        return cloneDeep(this.flyWeightDataBase[id]);
     }
+
+    setProp(id, prop, value, isMerge = false) {
+        this.flyWeightDataBase[id] = this.flyWeightDataBase[id] || {};
+        if(!isMerge)
+            this.flyWeightDataBase[id][prop] = value;
+        else if(this.flyWeightDataBase[id][prop]) {
+            extend(this.flyWeightDataBase[id][prop], value);
+        } else {
+            this.flyWeightDataBase[id][prop] = value;
+        }
+        return cloneDeep(this.flyWeightDataBase[id]);
+    }
+
     // all externalState is necessary ?
-    setExternalState(id, flyWeightObject) {
+    setExternalState(id, flyWeightObject, isChangeObj = false) {
+        
         let flyWeightObjectData = this.flyWeightDataBase[id];
+        if(!isChangeObj && !this.isChangeObj) {
+            flyWeightObjectData = cloneDeep(this.flyWeightDataBase[id]);
+        }
         for (let prop in flyWeightObject) {
             if (hasOwnProperty(flyWeightObject, prop)) {
                 flyWeightObjectData[prop] = flyWeightObject[prop];
             }
         }
-        return flyWeightObjectData;
-    }
+        if(!isChangeObj && !this.isChangeObj)
+            return flyWeightObjectData;
+        else
+            return cloneDeep(flyWeightObjectData);
+    }   
 }
 
 export default FlyWeightManager;

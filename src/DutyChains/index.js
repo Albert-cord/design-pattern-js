@@ -37,18 +37,18 @@ export class Chain {
 
     passToNext(nextKey, args, ret, context) {
         designPatternConsole(nextKey, args, ret, this.next);
-        args.unshift(nextKey, context);
+        // args.unshift(nextKey);
         // not easy deepEqual
         // ret === nextKey -> _.deepEqual
         // _ is so big;
-        if (isEqual(ret, nextKey)) return this.next && this.next.passRequest.apply(this.next, args);
+        if (isEqual(ret, nextKey)) return this.next && this.next.passRequest(nextKey, context, ...args);
         return ret;
     }
 
     passRequest(nextKey, context, ...args) {
         let ret = this.fn.apply(context, args);
         // nextKey is a serialeable string
-        return this.passToNext(nextKey, args, ret, context)
+        return this.passToNext(nextKey, args, ret, context);
     }    
 
     async passRequestAsync(nextKey, context, ...args) {
@@ -118,26 +118,26 @@ export default class DutyChains {
 
     async startUseContextAsync(contextWrap, ...argsWrap) {
         const {context, args} = this.getContextAndArgs(contextWrap, argsWrap);
-        args.unshift(this.nextKey, context);
+        // args.unshift(this.nextKey, context);
         let tailNode = this.hashChainMap.get(this.fns[this.length - 1].name);
         if(tailNode.next !== null) {
             tailNode.setNext(null);
         }
         if(this.length !== 0)
-            return await this.head.passRequestAsync.apply(this.head, args);
+            return await this.head.passRequestAsync(this.nextKey, context, ...args);
     }
 
     startUseContext(contextWrap, ...argsWrap) {
 
         const {context, args} = this.getContextAndArgs(contextWrap, argsWrap);
-        args.unshift(this.nextKey, context);
+        // args.unshift(this.nextKey, context);
         // 考虑闭环链的可能
         let tailNode = this.hashChainMap.get(this.fns[this.length - 1].name);
         if(tailNode && tailNode.next !== null) {
             tailNode.setNext(null);
         }
         if(this.length !== 0)
-            return this.head.passRequest.apply(this.head, args);
+            return this.head.passRequest(this.nextKey, context, ...args);
     }
 
     clear() {
@@ -164,6 +164,7 @@ export default class DutyChains {
     // reset? TODO
     // dc.insert('fn', insteadOfFn)
 
+
     // TODO
     // 防止闭环的可能
     setChainsByNumber(chainNum, fns, isSplice = false) {
@@ -174,7 +175,7 @@ export default class DutyChains {
         //     isObjectMode = true;
         //     fnsNames = []
         // }
-        console.log(chainNum, fns, isSplice)
+        // console.log(chainNum, fns, isSplice)
         let node = this.head;
         if (!node) {
             console.log('no position to insert so convert to initial;');
@@ -184,17 +185,28 @@ export default class DutyChains {
 
         let length = this.length ? this.length - 1 : 0;
         chainNum = chainNum >= 0 ? Math.min(chainNum, length) : Math.max(length + chainNum + 1, 0);
-        console.log(chainNum);
         let index;
         let isSteadOf = false;
+        let tmpNode;
         if(isSplice && chainNum === 0) {
+            let tmpHead = this.head;
             this.head = this.head.next;
+            tmpHead.setNext(null);
+            this.hashChainMap.delete(tmpHead.name);
+            this.fns = this.fns.slice(1);
             let node = this.head;
+            // let tail = node;
             while(node) {
+                // tail = node;
                 node.indexInChains--;
                 node = node.next;
             }
-
+            if(fns && fns.length > 0) 
+                return this.insert(0, ...fns);
+            else {
+                this.length = this.fns.length;
+                return;
+            }
         } else {
             for(let i = 0; i < chainNum - 1; i++) {
                 if(!node) return false;
@@ -203,7 +215,7 @@ export default class DutyChains {
             // when node is null, set zero?
             // if(!node)
             index = node ? node.indexInChains : 0;
-            let tmpNode = node && node.next;
+            tmpNode = node && node.next;
             // 单向链表
             // 找到已有的fn是跳过还是将已有的去除并连接新的Fn？
             // 连接，单向怎么连接前？

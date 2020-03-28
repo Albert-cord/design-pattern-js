@@ -2,7 +2,7 @@
   "name": "design-pattern-js",
   "version": "1.0.0",
   "description": "a useful JavaScript's design pattern library",
-  "main": "/src/index.js",
+  "main": "/dist/designPatternJs.js",
   "files": [
     "/dist/designPatternJs.js"
   ],

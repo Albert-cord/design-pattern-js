@@ -8,6 +8,8 @@ var getSingle = function( fn ){
     }
 };
 
+// need cache?
+// let cacheObj = {};
 export default class Single {
     constructor(fn) {
         this.fn = fn;
@@ -15,7 +17,14 @@ export default class Single {
     }
     // if args are not match by pre setter ?
     getInstance(...args) {
-        return this.instance || (this.instance = this.fn.apply(this, args));
+        // need cache?
+        // let cache;
+        return this.instance || (this.instance = this.fn.apply(null, args));
     }
 
 }
+
+// need cache ?
+// Single.clearCache = function() {
+//     cacheObj = {};
+// }

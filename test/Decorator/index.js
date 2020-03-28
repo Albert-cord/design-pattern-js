@@ -19,16 +19,16 @@ describe('Decorator', function() {
   // before(function() {
     
   // });
-  describe('#beforeFunction()', function() {
+  describe('#API', function() {
     it('beforeFunction', function() {
-      let beforeFn = beforeFunction(bef, f);
-      beforeFn('left', 'middle', 'right');
+      let beforeFn = beforeFunction(f, bef);
+      assert.equal(beforeFn('left', 'middle', 'right'), 'middle')
       assert.equal(beforeS, 'left');
       assert.equal(s, 'middle');
     });
     it('afterFunction', function() {
       let afterFn = afterFunction(f, af);
-      afterFn('left', 'middleBefore', 'right');
+      assert.equal(afterFn('left', 'middleBefore', 'right'), 'middleBefore')
       assert.equal(afterS, 'right');
       assert.equal(s, 'middleBefore');
     });

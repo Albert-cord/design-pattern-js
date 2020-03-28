@@ -236,6 +236,10 @@ export default class State {
             this.currentState = state;
         }
     }
+
+    get instance() {
+        return this.currentState.instance;
+    }
 }
 
 
