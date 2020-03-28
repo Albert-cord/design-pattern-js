@@ -5,10 +5,14 @@
           "useBuiltIns": "false",
           "modules": false,
           "corejs": "3"
-        }
+          
+        },
+        "@babel/preset-stage-2"
+        // "minify"
       ]
+    ],
+    "plugins": [
+      // "@babel/plugin-external-helpers"
+      // "@babel/plugin-proposal-export-default-from"
     ]
-    // "plugins": [
-    //   "external-helpers"
-    // ]
   }

@@ -9,18 +9,15 @@ import EventEmitter from './PublishSubscribe';
 import Single from './Single';
 import State from './State';
 
-export {beforeFunction};
-export {afterFunction};
-export {DutyChains};
-export {FlyWeightManager};
-export {MediatorFactory};
-export {EventEmitter as PublishSubscribe};
-export {EventEmitter};
-export {Single};
-export {State};
-
-
-
+// export {beforeFunction};
+// export {afterFunction};
+// export {DutyChains};
+// export {FlyWeightManager};
+// export {MediatorFactory};
+// export {EventEmitter as PublishSubscribe};
+// export {EventEmitter};
+// export {Single};
+// export {State};
 
 const DesignPattern = {
     beforeFunction,
@@ -29,11 +26,12 @@ const DesignPattern = {
     after: afterFunction,
     DutyChains,
     FlyWeightManager,
-    MediatorFactory,
+    MediatorFactory: MediatorFactory,
     PublishSubscribe: EventEmitter,
     EventEmitter,
     Single,
-    State
+    State,
+    version: '__VERSION__'
 }
 
-export default DesignPattern;
+ export default DesignPattern;

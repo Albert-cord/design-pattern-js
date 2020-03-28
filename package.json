@@ -1,22 +1,25 @@
 {
   "name": "design-pattern-js",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "a useful JavaScript's design pattern library",
-  "main": "/dist/designPatternJs.js",
+  "main": "dist/designPatternJs.umd.js",
   "files": [
-    "/dist/designPatternJs.js"
+    "/dist/designPatternJs.umd.js",
+    "/dist/designPatternJs.umd.js.map"
   ],
   "author": "Albert-cord",
   "dist": {
     "prod": {
-      "dir": "./dist/designPatternJs.js",
+      "umd": "./dist/designPatternJs.umd.js",
+      "cjs": "./dist/designPatternJs.cjs.js",
+      "es": "./dist/designPatternJs.esm.js",
       "name": "designPattern"
     }
   },
   "scripts": {
     "test": "karma start ./script/karma.conf.js",
     "test:prod": "npm run prod && npm run test",
-    "prod": "rollup --config rollup.config.js",
+    "prod": "cross-env NODE_ENV=production rollup --config rollup.config.js",
     "dev": "cross-env NODE_ENV=development rollup --config --watch rollup.config.js",
     "coverage": "nyc npm run test && nyc report",
     "test:mocha": "mocha ./test/testMochaUse.js",
@@ -43,11 +46,15 @@
   "homepage": "https://github.com/Albert-cord/design-pattern-js#readme",
   "devDependencies": {
     "@babel/core": "^7.8.7",
+    "@babel/plugin-external-helpers": "^7.8.3",
+    "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
+    "@babel/preset-stage-2": "^7.8.3",
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-json": "^4.0.2",
     "babel-loader": "^8.1.0",
+    "babel-preset-minify": "^0.5.1",
     "codecov": "^3.6.5",
     "coveralls": "^3.0.11",
     "cross-env": "^7.0.2",
@@ -62,6 +69,7 @@
     "rollup": "^2.0.6",
     "rollup-plugin-alias": "2.0.0",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-clean": "^1.0.0",
     "rollup-plugin-eslint": "7.0.0",
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-replace": "^2.2.0",
